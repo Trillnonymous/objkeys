@@ -78,6 +78,19 @@
 		}
 	};
 	
+	objkeys.filter = function(obj, callback){
+		if (Array.isArray(obj)){
+			return [].filter.call(obj, callback);
+		} else {
+			var keys = Object.keys(obj),
+				result = [].filter.call(keys, function(key, index){
+					var value = obj[key];
+					return callback.apply(this, [key, value, index, obj]);
+				});
+			return obj[result];
+		}
+	};
+	
 	objkeys.find = function(obj, callback){
 		if (Array.isArray(obj)){
 			return [].find.call(obj, callback);
@@ -252,6 +265,10 @@
 			every: function(callback){
 				var args = [obj, callback];
 				return objkeys.every.apply(objkeys, args);
+			},
+			filter: function(callback){
+				var args = [obj, callback];
+				return objkeys.filter.apply(objkeys, args);
 			},
 			find: function(callback){
 				var args = [obj, callback];
