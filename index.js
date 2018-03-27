@@ -78,6 +78,32 @@
 		}
 	};
 	
+	objkeys.find = function(obj, callback){
+		if (Array.isArray(obj)){
+			return [].find.call(obj, callback);
+		} else {
+			var keys = Object.keys(obj),
+				result = [].find.call(keys, function(key, index){
+					var value = obj[key];
+					return callback.apply(this, [key, value, index, obj]);
+				});
+			if (typeof result == 'undefined') return;
+			return obj[result];
+		}
+	};
+	
+	objkeys.forEach = function(obj, callback){
+		if (Array.isArray(obj)){
+			[].forEach.call(obj, callback);
+		} else {
+			var keys = Object.keys(obj);
+			[].forEach.call(keys, function(key, index){
+				var value = obj[key];
+				callback.apply(this, [key, value, index, obj]);
+			});
+		}
+	};
+	
 	objkeys.map = function(obj, callback){
 		if (Array.isArray(obj)){
 			return [].map.call(obj, callback);
@@ -189,4 +215,107 @@
 			});
 		}
 	};
+	
+	objkeys.sort = function(obj, comparator){
+		if (Array.isArray(obj)){
+			return [].sort.call(obj, comparator);
+		} else {
+			var keys = Object.keys(obj);
+			return [].sort.call(keys, function(key, index){
+				var value = obj[key];
+				return comparator.apply(this, [key, value, index, obj]);
+			});
+		}
+	};
+	
+	objkeys.toString = function(obj){
+		if (Array.isArray(obj)){
+			return [].toString.call(obj);
+		} else {
+			return JSON.stringify(obj);
+		}
+	};
+	
+	function ObjKeys(obj){
+		if (typeof obj === 'undefined' || obj === null){
+			obj = Object.create(null);
+		}
+		
+		return {
+			concat: function(){
+				var args = [obj];
+				[].slice.call(arguments).forEach(function(arg){
+					args[args.length] = arg;
+				});
+				return objkeys.concat.apply(objkeys, args);
+			},
+			every: function(callback){
+				var args = [obj, callback];
+				return objkeys.every.apply(objkeys, args);
+			},
+			find: function(callback){
+				var args = [obj, callback];
+				return objkeys.find.apply(objkeys, args);
+			},
+			first: function(){
+				var args = [obj];
+				objkeys.first.apply(objkeys, args);
+			},
+			forEach: function(callback){
+				var args = [obj, callback];
+				objkeys.forEach.apply(objkeys, args);
+			},
+			fromIndex: function(index){
+				var args = [obj, index];
+				objkeys.fromIndex.apply(objkeys, args);
+			},
+			last: function(){
+				var args = [obj];
+				objkeys.last.apply(objkeys, args);
+			},
+			map: function(callback){
+				var args = [obj, callback];
+				return objkeys.map.apply(objkeys, args);
+			},
+			reduce: function(callback, accumulator){
+				var args = [obj, callback, accumulator];
+				return objkeys.reduce.apply(objkeys, args);
+			},
+			reduceRight: function(callback, accumulator){
+				var args = [obj, callback, accumulator];
+				return objkeys.reduceRight.apply(objkeys, args);
+			},
+			reverse: function(type){
+				var args = [obj];
+				if (typeof type == 'string'){
+					args[args.length] = type;
+				}
+				return objkeys.reverse.apply(objkeys, args);
+			},
+			slice: function(callback){
+				var args = [obj];
+				[].slice.call(arguments).forEach(function(arg){
+					args[args.length] = arg;
+				});
+				return objkeys.reduce.apply(objkeys, args);
+			},
+			some: function(callback){
+				var args = [obj, callback];
+				return objkeys.reduce.apply(objkeys, args);
+			},
+			sort: function(comparator){
+				var args = [obj, comparator];
+				return objkeys.sort.apply(objkeys, args);
+			},
+			toString: function(){
+				var args = [obj];
+				return objkeys.toString.apply(objkeys, args);
+			},
+			targetObject: obj,
+			keys: !Array.isArray(obj) ? Object.keys(obj) : null,
+			length: Object.keys(obj).length
+		};
+	}
+	
+	window.ObjKeys = ObjKeys;
 });
